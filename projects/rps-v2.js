@@ -8,7 +8,6 @@ while (playGame) {
 
   if (rawInput) {
     let playerInput = rawInput.trim().toLowerCase();
-
     if (
       playerInput === "rock" ||
       playerInput === "paper" ||
@@ -44,9 +43,14 @@ while (playGame) {
       alert("Please enter rock, paper, or scissors.");
       continue; // don't run rest of code
     }
-  } else {
-    alert("You didn't enter anything - maybe next time.");
-    continue; // retry 
+  } else { 
+    if (rawInput === null ) {
+      alert("Canceled selection");
+      break; // 
+    } else {
+      alert("You didn't enter anything - maybe next time.");
+      continue; // retry 
+    }
   }
   let playAgain = confirm("Would you like to play again?"); 
   if (playAgain) {
@@ -56,3 +60,6 @@ while (playGame) {
   }
 } 
 
+if (!playGame) { 
+  alert("See you next time then"); 
+}

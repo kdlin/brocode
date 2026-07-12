@@ -68,10 +68,50 @@ let userConfirm = confirm("Ok === True\nCancel === False");
 console.log(userConfirm);
 
 
-let name = prompt("Please enter your name: ");
-if (name ) { 
-  console.log(name.trim().length); 
-  console.log(name.trim()); 
-} else { 
-  console.log("You didn't enter a name...");
-}
+// Rock Paper Scissors Game 
+let playGame = confirm("Would you like to play Rock Paper Scissors?"); 
+
+// Control Flow ( every iteration check if want to play game) 
+if (playGame) { // run loop only if Ok was selected
+  let rawInput= prompt(`Please select Rock, Paper, or Scissors`); 
+  // Check valid input 
+ if (rawInput) {
+    let playerInput = rawInput.trim().toLowerCase(); 
+    if (playerInput === "rock" || playerInput === "scissors" || playerInput === "paper") {
+      let compValue= Math.floor(Math.random() * 3 + 1);
+      let compChoice = 
+        compValue === 1 ? "rock" 
+        : compValue === 2 ? "paper" 
+        : "scissors";
+      let result = 
+          playerInput === "rock" ? 
+            compChoice === "rock" ? 
+            "tie"
+            : compChoice === "paper" ? 
+            "Computer Wins" 
+            : "Player Wins" 
+          : playerInput === "paper" ? 
+            compChoice === "rock" ?
+            "Player Wins"
+            : compChoice === "paper" ? 
+            "tie" 
+            : "Computer Wins"
+          : compChoice === "rock" ? 
+            "Computer Wins" 
+            : compChoice === "paper" ?
+            "Player Wins" 
+            : "tie";         
+      alert(`Player Selected: ${playerInput}\nComputer Selected: ${compChoice}\nResult: ${result}`)
+    }
+     } else { 
+      alert("Please enter a valid input"); 
+    }
+
+  }  else { 
+    alert("you declined playing the game"); 
+  }
+
+
+ 
+
+

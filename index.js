@@ -1,72 +1,24 @@
+// Dealing Random Poker Cards
 
+const myButton = document.querySelector(".deal-btn");
+const label1= document.querySelector("#label1"); 
+const label2= document.querySelector("#label2"); 
+const label3= document.querySelector("#label3"); 
 
+const  min = 1; 
+const max = 13; 
+let randomNum1; //exists 
+let randomNum2;
+let randomNum3;
+function randomNumFormula(){return Math.floor(Math.random() * (max - min + 1)) + 1;}
 
-// let pokemonName = "Pikachu"; 
-// let pokemonAge = 14;
-// let pokemonIsFireType = false; 
+myButton.addEventListener('click', () => {
+  randomNum1 = randomNumFormula();
+  label1.textContent = `Card: ${randomNum1}`; 
 
+  randomNum2 = randomNumFormula(); 
+  label2.textContent = `Card: ${randomNum2}`; 
 
-// document.getElementById("p1").textContent = pokemonName;
-// document.getElementById("p2").textContent = `${pokemonName} is ${pokemonAge} years old`;
-// document.getElementById("p3").textContent = `${pokemonName} is of type Fire: ${pokemonIsFireType}`;
-
-
-/*  === 2 types of user input window.prompt("input") and create a form 
-
-// let username;
-
-// document.getElementById("mySubmit").onclick = function() {
-//   username = document.getElementById("myText").value; 
-//   document.getElementById("myH1").textContent = `Hello ${username}`;
-// } 
-
-
-
-3) type conversions
-// Task: Accept User Input For pokemon currHP as a string then convert to Number
-and subtract 100 from it; 
-*/ 
-
-// document.getElementById("submitButton").onclick = function(){
-//   let hp = Number(document.getElementById("pokeHp").value); // string user inputted
-//   console.log(`Oh no!! Your pokemon got attacked`);
-//   let damagedHp = hp - 150;
-//   let message = `Your pokemon went from ${hp} hp to ${damagedHp} hp`;
-//   console.log(message);
-//   console.log(typeof hp, typeof message);
-
-// } 
-
-/* === let vs const 
-let radius; 
-const PI = 3.14;
-document.getElementById("submitButton").onclick = () => {
-  radius = Number(document.getElementById("myText").value);
-  let circumference = 2 * PI * radius;   
-  document.getElementById("myH3").textContent = `The circumference of Radius: ${radius} is ${circumference}`;
-}
-*/
-let count = 0;
-let countDisplay = document.getElementById("countDisplay");
-let decreaseBtn = document.getElementById("decreaseBtn");
-let resetBtn = document.getElementById("resetBtn"); 
-let increaseBtn = document.getElementById("increaseBtn"); 
-
-increaseBtn.onclick = () => {
-  count++; 
-  countDisplay.textContent = count; 
-}
-
-decreaseBtn.onclick = () => { 
-  if (count > 0) {
-    count--;
-  } else {
-    window.alert("count is already at 0");
-  }
-  countDisplay.textContent = count;  
-}
-
-resetBtn.onclick = () => { 
-  count = 0;
-  countDisplay.textContent = count; 
-}
+  randomNum3 = randomNumFormula();
+  label3.textContent = `Card: ${randomNum3}`;
+})

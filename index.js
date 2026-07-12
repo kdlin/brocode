@@ -27,11 +27,46 @@
 and subtract 100 from it; 
 */ 
 
-document.getElementById("submitButton").onclick = function(){
-  let hp = Number(document.getElementById("pokeHp").value); // string user inputted
-  console.log(`Oh no!! Your pokemon got attacked`);
-  let damagedHp = hp - 150;
-  let message = `Your pokemon went from ${hp} hp to ${damagedHp} hp`;
-  console.log(message);
-  console.log(typeof hp, typeof message);
-} 
+// document.getElementById("submitButton").onclick = function(){
+//   let hp = Number(document.getElementById("pokeHp").value); // string user inputted
+//   console.log(`Oh no!! Your pokemon got attacked`);
+//   let damagedHp = hp - 150;
+//   let message = `Your pokemon went from ${hp} hp to ${damagedHp} hp`;
+//   console.log(message);
+//   console.log(typeof hp, typeof message);
+
+// } 
+
+/* === let vs const 
+let radius; 
+const PI = 3.14;
+document.getElementById("submitButton").onclick = () => {
+  radius = Number(document.getElementById("myText").value);
+  let circumference = 2 * PI * radius;   
+  document.getElementById("myH3").textContent = `The circumference of Radius: ${radius} is ${circumference}`;
+}
+*/
+let count = 0;
+let countDisplay = document.getElementById("countDisplay");
+let decreaseBtn = document.getElementById("decreaseBtn");
+let resetBtn = document.getElementById("resetBtn"); 
+let increaseBtn = document.getElementById("increaseBtn"); 
+
+increaseBtn.onclick = () => {
+  count++; 
+  countDisplay.textContent = count; 
+}
+
+decreaseBtn.onclick = () => { 
+  if (count > 0) {
+    count--;
+  } else {
+    window.alert("count is already at 0");
+  }
+  countDisplay.textContent = count;  
+}
+
+resetBtn.onclick = () => { 
+  count = 0;
+  countDisplay.textContent = count; 
+}

@@ -24,41 +24,54 @@
 // })
 
 
-// Code that returns random letter from name 
-const name = "kdlin";
-let randIdx = Math.floor(Math.random() * name.length());
-console.log(name.charAt(randIdx));
+// // Code that returns random letter from name 
+// const name = "kdlin";
+// let randIdx = Math.floor(Math.random() * name.length);
+// console.log(name.charAt(randIdx));
 
 
 
-// Conditional: Switch Statements 
+// // Conditional: Switch Statements 
 
-// After cases, Switch statements have default case 
-// syntax
-switch("Pikachu") { 
-  case 1:
-    console.log("chuuuu");
-    break;
-  case 2: 
-    console.log("pika"); 
-    break;
-  case "Pikachu": 
-    console.log("Pikachu"); 
-  
-  default:
-    return 0;
+// // After cases, Switch statements have default case 
+// // syntax
+// switch("Pikachu") { 
+//   case 1:
+//     console.log("chuuuu");
+//     break;
+//   case 2: 
+//     console.log("pika"); 
+//     break;
+//   case "Pikachu": 
+//     console.log("Pikachu"); 
+//     break; 
+//   default:
+//     return 0;
+// }
+
+// // Ternary Operator 
+// let grade = 90;
+// let letterGrade = 
+//   grade > 90 
+//   ? "A"
+//   : grade > 80 
+//   ? "B"
+//   : grade > 70
+//   ? "C" 
+//   : grade > 60
+//   ? "D" 
+//   : "F"; 
+// console.log(letterGrade);
+
+// User input 
+let userConfirm = confirm("Ok === True\nCancel === False");
+console.log(userConfirm);
+
+
+let name = prompt("Please enter your name: ");
+if (name ) { 
+  console.log(name.trim().length); 
+  console.log(name.trim()); 
+} else { 
+  console.log("You didn't enter a name...");
 }
-
-// Ternary Operator 
-let grade = 90;
-let letterGrade = 
-  grade > 90 
-  ? "A"
-  : grade > 80 
-  ? "B"
-  : grade > 70
-  ? "C" 
-  : grade > 60
-  ? "D" 
-  : "F"; 
-console.log(letterGrade);

@@ -3,7 +3,9 @@ class Pokemon {
   constructor(name, type, hp) {
     this.name = name;
     this.type = type; 
+    this.#hp = hp;
   } 
+
   takeDamage(amount) {
     this.#hp -= amount;
   }
@@ -27,7 +29,6 @@ roster1.push(Pokemon.createDefault("Gardevoir", "psychic"));
 function battle(roster, damageAm){
   let fainted = 0;
   for (const pokemon of roster) {
-    pokemon.status() === "healthy" 
     if (pokemon.status() === "healthy") {
       pokemon.takeDamage(Math.floor(Math.random() * 100));
     } else {
@@ -38,7 +39,7 @@ function battle(roster, damageAm){
 
     // After takeDamage. If faints 
     if (pokemon.status() === "fainted") {
-      alert(`Pokemon ${pokemon.name} pokemon.status()`); 
+      alert(`Pokemon ${pokemon.name} ${pokemon.status()}`); 
       fainted++;
       if (fainted >= 3) { break;}
     } 
@@ -46,30 +47,32 @@ function battle(roster, damageAm){
  } 
 
  // Main
+battle(roster1); 
+
 let play = true; 
 while(play) {
   let startBattle = confirm("Ready to battle?");
   if (startBattle) { // not null or empty
     let rawInput = prompt("Which pokemon would you like to target?");
-  if (rawInput) {
-    let target = rawInput.trim().toLowerCase();
-    if (roster1.includes(target)) { 
-      roster1[roster1.indexOf(target)]
-        .takeDamage(Math.floor(Math.random()*100+50));
-  } else {
-    alert("That pokemon does not exist in the roster!")
-    break;
-  }
-
-  } else { 
-  if (rawInput === null) {
+    if (rawInput) {
+      let target = rawInput.trim().toLowerCase();
+      const targetPokemon = roster1.find(p => p.name.toLowerCase() === target);
+      if (targetPokemon) {
+        targetPokemon.takeDamage(Math.floor(Math.random()*100+50));
+        alert(`${targetPokemon.name} took damage`);
+      } else {
+        alert("Pokemon does not exist in the roster!!");
+      }  
+    } else if (rawInput === null) {
     alert("You cancelled your input")
-    break;
+    continue;
   } else {
     alert("Empty Input. Try again!");
-    continue
-  }
-  } 
-  play = confirm("Would you like to go again?")
-  } 
+    continue;
+   }
+} else {
+  alert("You declined to battle");
+  break;
 }
+ play = confirm("Would you like to go again?")
+} 

@@ -7,5 +7,11 @@ Thumbs.db
 .vscode/
 .idea/
 
+# Vim swap / undo / backup files
+*.swp
+*.swo
+*.un~
+*~
+
 # Node
 node_modules/

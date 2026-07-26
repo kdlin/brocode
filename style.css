@@ -43,12 +43,6 @@ nav h1 {
   color: white;
   font-size: 1.5rem;
 }
-.box:nth-child(odd) {
-  background: black;
-}
-.box:nth-child(even) {
-  background: #1414b8;
-}
 .flex-row {
   display: flex;
   justify-content: center;

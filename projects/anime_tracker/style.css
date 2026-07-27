@@ -98,11 +98,13 @@ main {
   flex-wrap: wrap;
   gap: 12px;
 }
-
+.anime-card h3 {
+  margin: 0;
+}
 .anime-card {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 16px;
   width: 160px;
   padding: 12px;
   margin: 12px 0px;
@@ -111,6 +113,18 @@ main {
   background: var(--surface-1dp);
   color: white;
 }
+
+.delete-btn {
+  background: var(--color-error);
+  color: #000;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 4px var(--space-md);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  cursor: pointer;
+}
+
 /* STATE -- classes your JS toggles */
 .status-watching { background: var(--color-watching); }
 .status-completed { background: var(--color-completed); }

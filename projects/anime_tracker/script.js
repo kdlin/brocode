@@ -13,6 +13,18 @@
     card.querySelector("h3").textContent = nameInput;
     card.querySelector(".rating").textContent = `Rating: ${rating}`; 
     card.classList.add("anime-card");
+    card.addEventListener(
+      "mouseenter", 
+      (event) => {
+        card.classList.add("status-plan");
+      }
+    );
+    card.addEventListener(
+      "mouseleave",
+      (event) => {
+        card.classList.remove("status-plan");
+      }
+    )
     return card;
   }
 
@@ -30,6 +42,7 @@
   false
 );
 
+
 allAnimes.addEventListener(
   "click",
   (event) => { 
@@ -38,23 +51,3 @@ allAnimes.addEventListener(
     if (card) { card.remove();}
   }
 );
-
-allAnimes.addEventListener(
-  "mouseover",
-  (event) => {
-    const card = event.target.closest(".anime-card");
-    if (card) {
-      card.classList.add("status-watching");
-    }
-  }
-)
-
-allAnimes.addEventListener(
-  "mouseout",
-  (event) => {
-    const card = event.target.closest(".anime-card");
-    if (card) {
-      card.classList.remove("status-watching");
-    }
-  }
-)

@@ -13,15 +13,15 @@
 // EX: h2.addEventListener -> h2 is the target
 
 const navBar = document.querySelector("nav");
-const h2 = nav.querySelector("h2");
+const h1 = navBar.querySelector("h1");
 
 const changeText = () => { 
 	alert("doing something");
 }
 
 
-h2.addEventListener("onclick", (event) => {
-	console.log(event.target) //h2
+h1.addEventListener("click", (event) => {
+	console.log(event.target) //h1
 	event.target.textContent = "pikachu";
 });
 

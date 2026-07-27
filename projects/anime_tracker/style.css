@@ -36,6 +36,12 @@
   --space-lg: 24px;
   --radius-sm: 4px;
   --radius-md: 8px;
+
+  /* type scale -- was missing; font-sizes below were hardcoded instead */
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.25rem;
+  --text-xl: 1.75rem;
 }
 
 /*  RESET */
@@ -44,11 +50,17 @@ body {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   font-size: 1rem;
   line-height: 1.5;
-  margin: var(--space-lg);
+  margin: 0; 
   background: var(--surface-0dp);
   color: var(--on-surface-high);
 }
 /* LAYOUT */ 
+nav {
+  padding: var(--space-lg);
+}
+main {
+  padding: var(--space-lg)
+}
 .actions { 
   display: flex;
   flex-direction: column; 
@@ -63,43 +75,20 @@ body {
 /* COMPONENTS */
 #name-input {
   font-size: 18px;
-  font-weight: 700;
+  font-weight: 500;
+  background-color: var(--surface-2dp);
+  padding: 8px;
+  border-radius: 4px;
 }
 
+#confirm-add { 
+  font-weight: 700;
+  border: 4px solid var(--surface-8dp);
+  background-color: var(--surface-4dp);
+  color: white; 
+  border-radius: 12px; 
+}
 /* anime cards -- ready for when that HTML exists */
-.anime-list {
-  list-style: none;
-  margin: var(--space-lg) 0 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
-}
-.anime-card {
-  background: var(--surface-1dp);
-  border-radius: var(--radius-md);
-  padding: var(--space-md);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-md);
-}
-.anime-card h3 {
-  margin: 0;
-  font-size: 1.25rem;
-  font-weight: 600;
-}
-.episode-count {
-  font-size: 0.875rem;
-  color: var(--on-surface-medium);
-}
-.status-badge {
-  font-size: 0.875rem;
-  font-weight: 600;
-  padding: 2px var(--space-sm);
-  border-radius: var(--radius-sm);
-  color: #000;
-}
 
 /* STATE -- classes your JS toggles */
 .status-watching { background: var(--color-watching); }

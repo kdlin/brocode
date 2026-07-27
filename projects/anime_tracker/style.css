@@ -73,8 +73,9 @@ main {
 }
 
 /* COMPONENTS */
-#name-input {
+#name-input, #rating-input {
   font-size: 18px;
+  color: white;
   font-weight: 500;
   background-color: var(--surface-2dp);
   padding: 8px;
@@ -87,6 +88,13 @@ main {
   background-color: var(--surface-4dp);
   color: white; 
   border-radius: 12px; 
+}
+
+.all-animes {
+  display: flex; 
+  flex-direction: column; 
+  gap: 4px;
+  
 }
 /* anime cards -- ready for when that HTML exists */
 

@@ -4,8 +4,8 @@ document.addEventListener("DOMContentLoaded", () => {
 const initApp =  () => {
   const nav = document.querySelector("nav");
   const adder = document.querySelector("#confirm-add"); 
-  const all_animes = document.querySelector(".all-animes");
-  const create_card = (name_input, rating) => { 
+  const allAnimes = document.querySelector(".all-animes");
+  const createCard = (nameInput, rating) => { 
     const card = document.createElement("div");
     card.innerHTML = `
     <div>
@@ -13,7 +13,7 @@ const initApp =  () => {
       <div class="rating"></div>
     </div>
     `
-    card.querySelector("h3").textContent = name_input;
+    card.querySelector("h3").textContent = nameInput;
     card.querySelector(".rating").textContent = `Rating: ${rating}`; 
     card.classList.add("anime-card");
     return card;
@@ -21,9 +21,11 @@ const initApp =  () => {
   adder.addEventListener(
     "click",
     (event) => {
-      const name_input = document.querySelector("#name-input");
-      const rating_input = document.querySelector("#rating-input");
-      all_animes.append(create_card(name_input.value, rating_input.value ))
+      const nameInput = document.querySelector("#name-input");
+      const ratingInput = document.querySelector("#rating-input");
+      allAnimes.append(createCard(nameInput.value, ratingInput.value ));
+      nameInput.value = "";
+      ratingInput.value = "";
       console.log("anime added");
   },
   false

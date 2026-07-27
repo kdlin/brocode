@@ -73,7 +73,7 @@ main {
 }
 
 /* COMPONENTS */
-#name-input, .rating-input {
+#name-input, #rating-input {
   font-size: 18px;
   color: white;
   font-weight: 500;
@@ -90,14 +90,27 @@ main {
   border-radius: 12px; 
 }
 
+/* row + wrap so cards flow left-to-right and drop to a new line once the
+   row fills, instead of one full-width card per row (column direction) */
 .all-animes {
-  display: flex; 
-  flex-direction: column; 
-  gap: 4px;
-  
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 12px;
 }
-/* anime cards -- ready for when that HTML exists */
 
+.anime-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 160px;
+  padding: 12px;
+  margin: 12px 0px;
+  border: 1px solid var(--surface-4dp);
+  border-radius: 12px;
+  background: var(--surface-1dp);
+  color: white;
+}
 /* STATE -- classes your JS toggles */
 .status-watching { background: var(--color-watching); }
 .status-completed { background: var(--color-completed); }

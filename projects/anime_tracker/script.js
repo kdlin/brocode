@@ -14,14 +14,14 @@ const initApp =  () => {
     </div>
     `
     card.querySelector("h3").textContent = name_input;
-    card.querySelector("#rating").textContent = `Rating: ${rating}`; 
+    card.querySelector(".rating").textContent = `Rating: ${rating}`; 
     return card;
   }
   adder.addEventListener(
     "click",
     (event) => {
       const name_input = document.querySelector("#name-input");
-      const rating_input = document.querySelector("#rating-input");
+      const rating_input = document.querySelector(".rating-input");
       all_animes.append(create_card(name_input.value, rating_input.value ))
       console.log("anime added");
   },

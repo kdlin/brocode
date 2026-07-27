@@ -73,7 +73,7 @@ main {
 }
 
 /* COMPONENTS */
-#name-input, #rating-input {
+#name-input, .rating-input {
   font-size: 18px;
   color: white;
   font-weight: 500;

@@ -384,18 +384,75 @@ different shape.
 
 ## 12. `slice` vs `splice`
 
-> **INCOMPLETE -- to finish.** Cut off mid-explanation. Stub below is what I got
-> to; the contrast (non-mutating vs mutating) still needs writing out properly.
+Two functions one letter apart that do genuinely different things. Worth being
+precise about both.
 
-**`.slice(start, end)`** -- non-mutating. Returns a **copy** of the section from
-`start` up to but **not including** `end`. The original array is untouched.
+### `.slice(start, end)` -- non-mutating
+
+Returns a **copy** of the section from `start` up to but **not including** `end`.
+Start is inclusive, end is exclusive. The original array is untouched.
 
 ```js
-[10, 20, 30, 40, 50].slice(0, 4);  // [10, 20, 30, 40]  (indices 0,1,2,3)
+const nums = [10, 20, 30, 40, 50];
+
+nums.slice(0, 4);   // [10, 20, 30, 40]   indices 0,1,2,3 -- index 4 excluded
+nums.slice(1, 3);   // [20, 30]
+nums.slice(2);      // [30, 40, 50]       omit end -> to the finish
+nums.slice();       // [10,20,30,40,50]   shallow copy of the whole array
+nums.slice(-2);     // [40, 50]           negative counts from the end
+
+nums;               // [10,20,30,40,50]   <- unchanged, always
 ```
 
-**`.splice(...)`** -- TODO: mutating counterpart. Removes and/or inserts in place,
-returns the removed elements. Write out the argument shape and a worked example.
+### `.splice(start, deleteCount, ...itemsToInsert)` -- mutating
+
+Removes elements in place and **returns the removed ones**. The original array is
+modified. Double-edged: you get the extracted values *and* you've changed the
+source.
+
+```js
+const nums = [10, 20, 30, 40, 50];
+
+const removed = nums.splice(1, 3);
+removed;   // [20, 30, 40]   <- returned to you
+nums;      // [10, 50]       <- ORIGINAL was gutted
+```
+
+It can insert too -- that's what the trailing arguments are for:
+
+```js
+const nums = [10, 20, 30];
+nums.splice(1, 1, 99, 98);   // remove 1 item at index 1, insert 99 and 98
+nums;                        // [10, 99, 98, 30]
+
+nums.splice(2, 0, "new");    // deleteCount 0 = pure insert, remove nothing
+```
+
+### The gotcha: the second argument means different things
+
+> Correction to my first pass: I said splice "does the same logic in terms of
+> grabbing values." It doesn't. **`slice`'s second arg is an END INDEX.
+> `splice`'s second arg is a DELETE COUNT.** Identical-looking calls, different
+> results:
+
+```js
+[10,20,30,40,50].slice(1, 3);    // [20, 30]       -> stop before index 3
+[10,20,30,40,50].splice(1, 3);   // [20, 30, 40]   -> remove 3 elements
+```
+
+The `pop` comparison holds in spirit -- both mutate and hand you what they took --
+but `pop` returns a single element while `splice` always returns an **array** of
+removed elements (empty `[]` if it removed nothing).
+
+### Which to reach for
+
+Default to **`slice`**. Non-mutating fits the same contract as `map`/`filter`/
+`reduce` (section 11), which means it chains safely and never surprises a caller
+holding a reference to the same array. Use `splice` only when in-place mutation is
+genuinely what you want -- and never on state you handed to React, which relies on
+identity changes to detect updates.
+
+Mnemonic: **`splice` has the extra `p` -- for "permanent."**
 
 ---
 

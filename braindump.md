@@ -737,3 +737,52 @@ const visible = selectedTags.length === 0
   ? metrics
   : metrics.filter(m => m.tags.some(t => selectedTags.includes(t)));
 ```
+
+### The real version: parsing before matching
+
+In the actual dashboard the team field isn't an array -- it arrives as a
+**delimited string**. So there's a parse step before `.some` has anything to
+iterate:
+
+```js
+const visible = goals.filter(goal =>
+  splitTeams(goal.teams).some(team => validTeams.includes(team))
+);
+```
+
+Three layers, read outside-in:
+
+| Layer | Operates on | Returns | Job |
+|---|---|---|---|
+| `.filter` | the goals list | array of goals | keep or drop each **whole goal** |
+| `.some` | that goal's parsed teams | one boolean | "did **any** team match?" |
+| `.includes` | the valid-teams whitelist | one boolean | "is **this** team allowed?" |
+
+`splitTeams` sits between the outer and middle layer -- it takes the raw string
+(`"Platform, Growth"`) and hands `.some` an actual array (`["Platform","Growth"]`).
+Without it there's nothing to iterate; `.some` isn't a string method.
+
+**How it bubbles back up:** `.includes` answers per team. `.some` collapses those
+answers into one `true` the instant any of them passes -- and stops iterating
+right there. `.filter` receives that single boolean and keeps the goal **in its
+entirety** -- filter never modifies the item, it only decides membership. Result:
+a list of whole, untouched goals that matched.
+
+### Two things that bite in the parse
+
+**1. Whitespace.** Splitting `"Platform, Growth"` on `","` yields
+`["Platform", " Growth"]` -- note the leading space. `includes` is an exact match,
+so `" Growth"` silently fails against `"Growth"`. Trim inside the parser:
+
+```js
+const splitTeams = str =>
+  (str ?? "").split(",").map(s => s.trim()).filter(Boolean);
+```
+
+The `?? ""` handles a missing field (section 7); the trailing `.filter(Boolean)`
+drops empty strings from a stray trailing comma.
+
+**2. Re-parsing per item.** `splitTeams` runs once per goal, every time the filter
+runs -- which in React means every render. Fine for a few hundred goals. If the
+list is large, parse once when the data loads and store the array, or memoize the
+filtered result rather than recomputing it on each pass.

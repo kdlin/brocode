@@ -234,3 +234,28 @@ Two counters made this way don't share state -- each call to `makeCounter` creat
 a fresh `count`. That's the basis for private state in JS without classes:
 factories, module patterns, event handlers holding onto their setup data, and
 React hooks all run on this.
+
+---
+
+## 10. Why JS leans on plain objects where Java leans on classes
+
+In Java, a class is **mandatory** -- there is no top-level function, every piece of
+code lives inside a class, so classes are the unit of everything.
+
+In JavaScript, functions and object literals are first-class. You can build most
+things out of plain objects and functions composed together, which is lighter than
+declaring a type hierarchy for it.
+
+> Correction to my first pass: JS **does** have classes -- the `class` keyword has
+> existed since ES6. They're syntactic sugar over the prototype system. The real
+> difference isn't that JS lacks classes, it's that JS doesn't **require** them.
+
+```js
+// JS: this is a complete, legitimate "model"
+const goal = { id: "1.1", name: "Reduce latency", target: 200 };
+const isAtRisk = g => g.current > g.target;
+```
+
+Classes still earn their place in JS when you need many instances with shared
+behavior and their own state (a `Chart`, a `Connection`). For data shapes and
+pure transformations, an object plus a function is usually clearer.

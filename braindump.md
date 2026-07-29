@@ -259,3 +259,46 @@ const isAtRisk = g => g.current > g.target;
 Classes still earn their place in JS when you need many instances with shared
 behavior and their own state (a `Chart`, a `Connection`). For data shapes and
 pure transformations, an object plus a function is usually clearer.
+
+---
+
+## 11. Higher-order functions: `map`, `filter`, `reduce`
+
+All three take a callback, and **none of them mutate the original array** -- they
+each return a new one. That's the shared contract.
+
+**`.map`** -- transform. Same length in, same length out. Only the contents change.
+
+```js
+[1, 2, 3].map(n => n * 2);        // [2, 4, 6]
+goals.map(g => g.name);           // 3 goals in, 3 names out
+```
+
+**`.filter`** -- select. Runs a predicate per item; keeps it if the predicate is
+truthy, drops it otherwise. Length can only shrink or stay equal. Contents
+unchanged.
+
+```js
+goals.filter(g => g.status === "At Risk");
+```
+
+**`.reduce`** -- collapse. Start with an accumulator, visit every item, fold it in,
+end with **exactly one value**. That value doesn't have to be a number -- it can be
+an object, array, string, Map, whatever.
+
+```js
+history.reduce((acc, entry) => {
+  acc[`${entry.goalId}~${entry.month}`] = entry.status;
+  return acc;
+}, {});   // array -> lookup object keyed by composite key
+```
+
+**Why not always reduce?** `reduce` can express `map` and `filter` -- it's the
+general case. But general means opaque: a reader has to trace the accumulator to
+learn what you're doing. `map` announces "transforming, length preserved" in one
+word. `filter` announces "selecting."
+
+So: **use the most specific tool that fits.** Chain them when it reads clearly
+(`.filter(...).map(...)`), and reach for `reduce` only when the result isn't a
+one-to-one transform or a subset -- i.e. when you're genuinely collapsing to a
+different shape.

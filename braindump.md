@@ -664,3 +664,76 @@ This privacy-by-default is the enforcement mechanism behind section 13. The
 storage module can hold all the messy internals -- URL builders, merge helpers,
 cache -- and export only `getGoals` and `saveGoal`. The narrow public surface
 *is* the door.
+
+---
+
+## 17. Tag matching with `.some` + `.includes`
+
+**The problem:** every metric carries an array of tags -- tiers, team names,
+whatever. The user picks a set of filter tags. Keep only the metrics that match
+**at least one** of the selected tags.
+
+```js
+const metrics = [
+  { name: "Latency",   tags: ["tier-1", "platform"] },
+  { name: "Churn",     tags: ["tier-3", "growth"] },
+  { name: "Uptime",    tags: ["tier-1", "infra"] },
+];
+
+const selectedTags = ["tier-1", "growth"];
+```
+
+**The solution -- one higher-order function nested inside another:**
+
+```js
+const visible = metrics.filter(metric =>
+  metric.tags.some(tag => selectedTags.includes(tag))
+);
+// -> Latency (tier-1), Churn (growth), Uptime (tier-1)
+```
+
+Read it outside-in, three layers:
+
+1. **`.filter`** on the metrics -- decides which metrics survive. Needs a
+   true/false per metric.
+2. **`.some`** on that metric's tags -- returns `true` if **any** tag passes the
+   test. This is what turns "a list of tags" into the single boolean `filter`
+   needs.
+3. **`.includes`** on the selected tags -- returns `true` if this one tag is
+   present in the whitelist.
+
+### Direction matters
+
+`selectedTags.includes(tag)` -- the **whitelist** is the receiver, the current tag
+is the argument. You're asking *"is the thing I'm holding in the list of things I
+want?"* Flipping it (`tag.includes(selectedTags)`) is nonsense: `tag` is a string,
+and `String.includes` would be doing substring matching against an array.
+
+### `some` vs `every` -- OR vs AND
+
+```js
+metric.tags.some(t => selectedTags.includes(t))    // ANY match  -> OR
+metric.tags.every(t => selectedTags.includes(t))   // ALL match  -> AND
+```
+
+Swapping one word flips the whole filter's meaning. `some` = "tagged tier-1 **or**
+growth." `every` = "tagged with nothing outside my selection."
+
+Both **short-circuit**: `some` bails on the first `true`, `every` bails on the
+first `false`. No wasted iterations on a long tag list.
+
+### Edge case worth knowing
+
+`[].some(...)` is `false` and `[].every(...)` is `true` -- vacuous truth. A metric
+with no tags at all disappears under `some` but survives under `every`. If that's
+wrong for your UI, guard it explicitly rather than discovering it in prod.
+
+Also: if `selectedTags` is empty, this filter hides **everything**. Usually you
+want empty-selection to mean "no filter applied," which is an explicit early
+return, not something the chain gives you for free:
+
+```js
+const visible = selectedTags.length === 0
+  ? metrics
+  : metrics.filter(m => m.tags.some(t => selectedTags.includes(t)));
+```

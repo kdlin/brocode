@@ -127,3 +127,27 @@ null == undefined  // true
 
 Rule: **always use `===`.** The one idiomatic exception is `x == null`, which is a
 deliberate shorthand for "x is null OR undefined."
+
+---
+
+## 6. `?.` -- optional chaining
+
+Guards against reading a property or calling a method on something that isn't
+there.
+
+```js
+user?.profile?.name
+user.getName?.()
+list?.[0]
+```
+
+How it works: if the value on the **left** is `null` **or** `undefined`, the whole
+expression **short-circuits and evaluates to `undefined`** instead of throwing
+`Cannot read properties of undefined`.
+
+> Correction to my first pass: I said it checks for `undefined`. It checks for
+> **both `null` and `undefined`** -- same set as `??` and `== null`.
+
+Use it where the value genuinely might be absent (optional API fields, a lookup
+that can miss, a DOM query). Do **not** sprinkle it everywhere -- if a value should
+always exist, `?.` hides the bug instead of surfacing it.

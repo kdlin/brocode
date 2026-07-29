@@ -377,3 +377,18 @@ thing that ever crossed the boundary was an order and a plate.
 > depend on low-level modules (the database); both should depend on an
 > abstraction. There's a dose of **S -- Single Responsibility** in it too: the
 > component renders, the storage module persists, neither does both.
+
+---
+
+## 14. Vanilla JS vs React for data management
+
+> **INCOMPLETE -- to finish.** I started this one and blanked on the reasoning.
+
+The claim I was reaching for: the data layer stays **plain vanilla JavaScript**,
+not React. React handles rendering and UI state; the storage module, the merge
+logic, the composite-key lookups, the filter/sort/pick pipeline -- all of that is
+framework-agnostic JS with no hooks and no components in it.
+
+TODO: write out *why* that separation pays off. (Testability without a renderer?
+Portability if the UI framework changes? Same Dependency Inversion argument as
+section 13, applied one layer up?) Come back and finish properly.

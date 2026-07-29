@@ -392,3 +392,42 @@ framework-agnostic JS with no hooks and no components in it.
 TODO: write out *why* that separation pays off. (Testability without a renderer?
 Portability if the UI framework changes? Same Dependency Inversion argument as
 section 13, applied one layer up?) Come back and finish properly.
+
+---
+
+## 15. Generics
+
+A generic is a **type passed as an argument**. Same idea as a normal parameter,
+except the thing flowing in is a type rather than a value. Written with **angle
+brackets `<>`**.
+
+```ts
+function first<T>(items: T[]): T | undefined {
+  return items[0];
+}
+
+first<string>(["a", "b"]);   // returns string | undefined
+first([1, 2, 3]);            // T inferred as number
+```
+
+Without generics you'd either write one copy per type or fall back to `any` and
+lose all safety. The generic lets the function stay one implementation while the
+caller decides the type.
+
+**On containers**, this is exactly the Java pattern:
+
+```ts
+const scores: Record<string, number> = { alice: 10 };   // string keys, number values
+const ids: Array<string> = ["a", "b"];
+const cache: Map<string, Goal> = new Map();
+```
+
+```java
+// Java equivalent
+HashMap<String, Integer> scores = new HashMap<>();
+List<String> ids = new ArrayList<>();
+```
+
+`Record<string, number>` reads the same way `HashMap<String, Integer>` does: the
+first type parameter is the key, the second is the value. Declaring the pair up
+front is what lets the compiler catch `scores.alice = "ten"` before it ships.

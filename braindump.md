@@ -431,3 +431,53 @@ List<String> ids = new ArrayList<>();
 `Record<string, number>` reads the same way `HashMap<String, Integer>` does: the
 first type parameter is the key, the second is the value. Declaring the pair up
 front is what lets the compiler catch `scores.alice = "ten"` before it ships.
+
+---
+
+## 16. Modules: import / export
+
+Unlike Python, where importing a file gives you access to everything defined in
+it, **ES modules are private by default.** A function or variable in `utils.js` is
+invisible to every other file unless it's explicitly exported. Exporting is what
+makes something public.
+
+**Two ways to declare exports.** Inline, on the declaration:
+
+```js
+export function getGoals() { ... }
+export const DEFAULT_STATUS = "On Track";
+```
+
+Or collected in a bracketed list at the bottom of the file:
+
+```js
+function getGoals() { ... }
+const DEFAULT_STATUS = "On Track";
+
+export { getGoals, DEFAULT_STATUS };
+```
+
+Same result. The bottom-of-file list gives you one place to see the module's whole
+public surface; the inline form keeps the marker next to the thing it describes.
+
+**Default vs named.** A module can have at most **one** default export, plus any
+number of named ones -- they coexist fine.
+
+```js
+export default function StorageClient() { ... }
+export function getGoals() { ... }
+```
+
+```js
+import StorageClient from "./storage.js";        // default: name it whatever
+import { getGoals } from "./storage.js";         // named: name must match
+import StorageClient, { getGoals } from "./storage.js";  // both at once
+```
+
+The named import must match the exported name exactly (unless you rename with
+`as`); the default import is just whatever you call it at the import site.
+
+This privacy-by-default is the enforcement mechanism behind section 13. The
+storage module can hold all the messy internals -- URL builders, merge helpers,
+cache -- and export only `getGoals` and `saveGoal`. The narrow public surface
+*is* the door.

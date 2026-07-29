@@ -108,3 +108,22 @@ Runtime consequences:
 - Anything that must be enforced at runtime (API responses, user input, parsed
   JSON) needs an actual runtime validation step. The type annotation is a promise,
   not a check.
+
+---
+
+## 5. `===` vs `==`
+
+`===` is **strict equality**: compares type *and* value, no conversion.
+`==` is **loose equality**: coerces the operands to a common type first, then
+compares. That coercion produces results that look absurd out of context:
+
+```js
+0 == ""         // true   (both coerce to 0)
+0 == "0"        // true
+0 == false      // true
+null == undefined  // true
+"" === 0        // false  <- strict says no
+```
+
+Rule: **always use `===`.** The one idiomatic exception is `x == null`, which is a
+deliberate shorthand for "x is null OR undefined."

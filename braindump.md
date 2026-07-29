@@ -203,3 +203,34 @@ goal.description?.trim()       // fine
 Note the pairing: `?:` is the **declaration** that a value might be missing; `?.`
 and `??` are the **runtime tools** for handling that. The type tells you the
 hazard exists; it does nothing to protect you at runtime (see section 4).
+
+---
+
+## 9. Closures
+
+A closure is a function that **remembers the variables from the scope it was
+defined in, and keeps them alive even after that outer scope has returned.**
+
+```js
+function makeCounter() {
+  let count = 0;             // lives in makeCounter's scope
+  return function () {       // this inner fn closes over `count`
+    count += 1;
+    return count;
+  };
+}
+
+const next = makeCounter();
+next();  // 1
+next();  // 2   <- `count` survived, even though makeCounter already returned
+```
+
+> Correction to my first pass: I described it as the inner function "sharing the
+> scope." Sharing isn't the interesting part -- **persistence** is. Normally a
+> function's locals are garbage collected when it returns. A closure keeps a live
+> reference, so the variable outlives its own function call.
+
+Two counters made this way don't share state -- each call to `makeCounter` creates
+a fresh `count`. That's the basis for private state in JS without classes:
+factories, module patterns, event handlers holding onto their setup data, and
+React hooks all run on this.

@@ -302,3 +302,20 @@ So: **use the most specific tool that fits.** Chain them when it reads clearly
 (`.filter(...).map(...)`), and reach for `reduce` only when the result isn't a
 one-to-one transform or a subset -- i.e. when you're genuinely collapsing to a
 different shape.
+
+---
+
+## 12. `slice` vs `splice`
+
+> **INCOMPLETE -- to finish.** Cut off mid-explanation. Stub below is what I got
+> to; the contrast (non-mutating vs mutating) still needs writing out properly.
+
+**`.slice(start, end)`** -- non-mutating. Returns a **copy** of the section from
+`start` up to but **not including** `end`. The original array is untouched.
+
+```js
+[10, 20, 30, 40, 50].slice(0, 4);  // [10, 20, 30, 40]  (indices 0,1,2,3)
+```
+
+**`.splice(...)`** -- TODO: mutating counterpart. Removes and/or inserts in place,
+returns the removed elements. Write out the argument shape and a worked example.

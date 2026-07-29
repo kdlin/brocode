@@ -25,3 +25,40 @@ categories:
 
 The mental split: *seed data is what the thing IS, derived data is what the thing
 CURRENTLY LOOKS LIKE given everything that's happened to it.*
+
+---
+
+## 2. History log vs overwrite (the composite key)
+
+Users update the status of a metric goal over time. The naive design overwrites a
+single `status` field. That destroys the past. Instead, every update writes into a
+**status history**.
+
+Shape of an entry:
+
+```js
+{
+  reportingMonth: "2026-03",
+  status: "At Risk"   // | "Significant Risk" | "On Track"
+}
+```
+
+Keyed by a **composite key**: the goal ID and the reporting month joined by a
+`~` delimiter so it can be split back apart later.
+
+```
+"1~2026-03"
+"1.1~2026-03"
+"1.2~2026-04"
+```
+
+The invariant: **one entry per (goal, month) pair.** A new update for goal `1.1`
+in `2026-03` overwrites *only* that key. Every other month is untouched.
+
+The bank-account analogy:
+- Overwrite model = your account balance. One number, the running total, no past.
+- History model = your transaction ledger. Every event preserved, and the balance
+  is *derived* from it.
+
+The history model buys us **snapshots**: pick any reporting month and ask "what
+did this goal look like as of then?"

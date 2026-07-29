@@ -62,3 +62,27 @@ The bank-account analogy:
 
 The history model buys us **snapshots**: pick any reporting month and ask "what
 did this goal look like as of then?"
+
+---
+
+## 3. Resolving the latest status (filter, sort, take index 0)
+
+Given the flat history, getting "the current status of goal X" is a three-step
+pipeline:
+
+1. **Filter** to entries belonging to that goal (and at or before the target
+   month, if resolving a snapshot).
+2. **Sort** by reporting month, descending.
+3. **Take index `[0]`** -- the most recent surviving entry.
+
+```js
+function getLatestStatus(history, goalId) {
+  return history
+    .filter(entry => entry.goalId === goalId)
+    .sort((a, b) => b.reportingMonth.localeCompare(a.reportingMonth))[0];
+}
+```
+
+Because it's filter -> sort -> pick, the same function answers both "what is it
+now" and "what was it in March" -- the only difference is one extra clause in the
+filter. That's the payoff for storing history instead of a single value.

@@ -459,16 +459,65 @@ thing that ever crossed the boundary was an order and a plate.
 
 ## 14. Vanilla JS vs React for data management
 
-> **INCOMPLETE -- to finish.** I started this one and blanked on the reasoning.
+The data layer stays **plain vanilla JavaScript**, not React. The storage module,
+the seed/override merge, the composite-key lookups, the filter -> sort -> pick
+pipeline -- all framework-agnostic JS, no hooks, no components.
 
-The claim I was reaching for: the data layer stays **plain vanilla JavaScript**,
-not React. React handles rendering and UI state; the storage module, the merge
-logic, the composite-key lookups, the filter/sort/pick pipeline -- all of that is
-framework-agnostic JS with no hooks and no components in it.
+**The one-line reason: React is a rendering library, and logic isn't rendering.**
+Everything below follows from that.
 
-TODO: write out *why* that separation pays off. (Testability without a renderer?
-Portability if the UI framework changes? Same Dependency Inversion argument as
-section 13, applied one layer up?) Come back and finish properly.
+### 1. Testability
+
+A pure function tests with no machinery at all:
+
+```js
+expect(getLatestStatus(history, "1.1"))
+  .toEqual({ month: "2026-03", status: "At Risk" });
+```
+
+The identical logic inside a hook needs a component harness, a renderer, `act()`,
+and async wrappers to assert the same thing. Slower, and the test now breaks when
+the UI changes shape -- even though the logic didn't.
+
+### 2. Reusability -- the hard constraint
+
+The Rules of Hooks are enforced, not stylistic. Logic living in a hook can **only**
+be called from inside a React component. Not conditionally, not in a loop, not
+inside `try/catch`, not from a Node script, a migration, or a server route.
+
+A plain function has none of those restrictions -- callable from a hook, a CLI, a
+test, a seed script, or the backend. So burying logic in a hook doesn't just add a
+dependency, it **deletes call sites.**
+
+### 3. Fewer failure modes
+
+A pure function's entire surface is: inputs, output. Move it into a component and
+it inherits render timing, dependency arrays, stale closures (section 9), effects
+double-firing under StrictMode, and re-render churn. None of those are your logic
+being *wrong* -- they're your logic being entangled with a lifecycle it never
+needed.
+
+### 4. Portability
+
+The section 13 argument, one layer up. React is a dependency and frameworks churn.
+If the merge logic and status resolution are plain JS, moving to Svelte or to
+server components is a **UI rewrite, not a logic rewrite.**
+
+### The dividing line
+
+Ask: **does this concept survive if you delete the screen?**
+
+| Belongs in React (UI state) | Belongs in vanilla JS (domain logic) |
+|---|---|
+| Is the modal open | Merging seed data with admin overrides |
+| Which tab is active | Parsing `goal~month` composite keys |
+| Is the form dirty | Resolving the latest status for a month |
+| Current input value | Deciding if a goal is at risk |
+
+Left column is meaningless without a screen. Right column is still true if the
+dashboard becomes a CSV export or a nightly cron job. "What was goal 1.1's status
+as of March" is a **fact about the data** -- React's only job is to put it on
+screen.
 
 ---
 

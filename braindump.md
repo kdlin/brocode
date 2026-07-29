@@ -176,3 +176,30 @@ This matters constantly in a metrics dashboard: `0` progress, an empty note, and
 Rule of thumb: reach for `??` when supplying a default for something numeric,
 string-y, or boolean. `||` is only correct when "empty" and "missing" genuinely
 mean the same thing.
+
+---
+
+## 8. `?:` -- the optional property marker (TypeScript)
+
+Different thing entirely from `?.` and `??` -- this one is **type syntax**, not a
+runtime operator.
+
+```ts
+interface Goal {
+  id: string;
+  description?: string;   // string | undefined
+}
+```
+
+`description?: string` means the property may be **absent or `undefined`**. It is
+a signal to every consumer: *narrow this before you use it.*
+
+```ts
+goal.description.trim()        // TS error: possibly undefined
+goal.description?.trim()       // fine
+(goal.description ?? "").trim()  // fine, with a default
+```
+
+Note the pairing: `?:` is the **declaration** that a value might be missing; `?.`
+and `??` are the **runtime tools** for handling that. The type tells you the
+hazard exists; it does nothing to protect you at runtime (see section 4).

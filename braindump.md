@@ -86,3 +86,25 @@ function getLatestStatus(history, goalId) {
 Because it's filter -> sort -> pick, the same function answers both "what is it
 now" and "what was it in March" -- the only difference is one extra clause in the
 filter. That's the payoff for storing history instead of a single value.
+
+---
+
+## 4. What happens to TypeScript types at runtime
+
+TypeScript types exist **only at compile time**. `tsc` type-checks, then **erases**
+the types and emits plain JavaScript. Nothing about the types survives into the
+running program.
+
+The rocket analogy: the type system is the booster stage. It does its job on the
+way up, then falls away. What reaches orbit is just JavaScript.
+
+Runtime consequences:
+- Types are **not** runtime guards. A type error does not stop your app.
+- By default `tsc` still **emits JS even when it reports type errors** -- you can
+  ship a program the compiler complained about. (`noEmitOnError: true` changes
+  this.)
+- So type safety is only as real as your process. Teams enforce it in **CI**:
+  typecheck must pass green before merge.
+- Anything that must be enforced at runtime (API responses, user input, parsed
+  JSON) needs an actual runtime validation step. The type annotation is a promise,
+  not a check.

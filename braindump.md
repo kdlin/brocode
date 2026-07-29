@@ -151,3 +151,28 @@ expression **short-circuits and evaluates to `undefined`** instead of throwing
 Use it where the value genuinely might be absent (optional API fields, a lookup
 that can miss, a DOM query). Do **not** sprinkle it everywhere -- if a value should
 always exist, `?.` hides the bug instead of surfacing it.
+
+---
+
+## 7. `??` -- nullish coalescing (and why it isn't `||`)
+
+`a ?? b` returns `b` **only when `a` is `null` or `undefined`.**
+`a || b` returns `b` whenever `a` is **falsy** -- which includes `0`, `""`, `NaN`,
+and `false`.
+
+```js
+const count = 0;
+count ?? 10   // 0   <- 0 is a real value, keep it
+count || 10   // 10  <- bug: a legitimate zero got replaced
+
+const label = "";
+label ?? "N/A"  // ""
+label || "N/A"  // "N/A"
+```
+
+This matters constantly in a metrics dashboard: `0` progress, an empty note, and
+`false` for a boolean flag are all **valid data**. `||` silently eats them.
+
+Rule of thumb: reach for `??` when supplying a default for something numeric,
+string-y, or boolean. `||` is only correct when "empty" and "missing" genuinely
+mean the same thing.

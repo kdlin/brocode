@@ -208,13 +208,21 @@ hazard exists; it does nothing to protect you at runtime (see section 4).
 
 ## 9. Closures
 
-A closure is a function that **remembers the variables from the scope it was
-defined in, and keeps them alive even after that outer scope has returned.**
+**One-line definition:** a closure is a function bundled together with the
+variables from the scope it was *defined* in -- and it keeps a **live reference**
+to those variables, so they stay alive even after that outer function has
+returned.
+
+The load-bearing word is **reference**. The closure does not copy the value at the
+moment it's created. It holds onto the variable itself. Everything surprising
+about closures falls out of that one fact.
+
+### The baseline
 
 ```js
 function makeCounter() {
-  let count = 0;             // lives in makeCounter's scope
-  return function () {       // this inner fn closes over `count`
+  let count = 0;             // normally dies when makeCounter returns
+  return function () {       // ...but this fn closes over `count`
     count += 1;
     return count;
   };
@@ -222,18 +230,87 @@ function makeCounter() {
 
 const next = makeCounter();
 next();  // 1
-next();  // 2   <- `count` survived, even though makeCounter already returned
+next();  // 2   <- `count` survived; makeCounter finished running long ago
 ```
 
-> Correction to my first pass: I described it as the inner function "sharing the
-> scope." Sharing isn't the interesting part -- **persistence** is. Normally a
-> function's locals are garbage collected when it returns. A closure keeps a live
-> reference, so the variable outlives its own function call.
+`makeCounter` returned on line `const next = ...`. Its stack frame is gone. But
+`count` isn't garbage collected, because the returned function still points at it.
 
-Two counters made this way don't share state -- each call to `makeCounter` creates
-a fresh `count`. That's the basis for private state in JS without classes:
-factories, module patterns, event handlers holding onto their setup data, and
-React hooks all run on this.
+### Each call makes a fresh, independent variable
+
+```js
+const a = makeCounter();
+const b = makeCounter();
+a(); a(); a();  // 3
+b();            // 1   <- b has its own `count`, not a's
+```
+
+Every invocation of `makeCounter` creates a new binding. Closures over *different*
+calls are isolated.
+
+### But closures over the SAME call share one variable
+
+```js
+function makeAccount(balance) {
+  return {
+    deposit: amount => { balance += amount; },
+    getBalance: () => balance,          // reads the same `balance`
+  };
+}
+
+const acct = makeAccount(100);
+acct.deposit(50);
+acct.getBalance();   // 150
+```
+
+Two separate functions, one shared `balance`. `getBalance` sees `deposit`'s write
+because both hold a reference to the same variable -- not to a copy of `100`.
+
+Note what this gives you: `balance` is genuinely **private**. There is no
+`acct.balance`. The only way to touch it is through the two functions that closed
+over it. That's encapsulation with no `class` and no `#private` field.
+
+### The classic bug (live reference, proven)
+
+```js
+for (var i = 0; i < 3; i++) {
+  setTimeout(() => console.log(i), 0);
+}
+// 3, 3, 3   <- NOT 0, 1, 2
+```
+
+`var` is function-scoped, so all three callbacks closed over **the same single
+`i`**. By the time the timeouts fire, the loop has finished and that one `i` holds
+`3`. If closures captured values, this would print `0, 1, 2`. It doesn't -- proof
+that the capture is by reference.
+
+```js
+for (let i = 0; i < 3; i++) {
+  setTimeout(() => console.log(i), 0);
+}
+// 0, 1, 2
+```
+
+`let` is block-scoped: the loop creates a **new `i` binding per iteration**, so
+each callback closes over its own. Same code, different scoping rule, opposite
+result.
+
+### Where this shows up in real work
+
+- **Factories / the module pattern** -- private state, as in `makeAccount` above.
+- **Event handlers** -- a click handler created inside a setup function still has
+  the config, the element, and the id it was built with, long after setup returned.
+- **React hooks** -- `useState` works because the setter closes over which slot in
+  the component's state it owns. The infamous "stale closure" bug is a handler that
+  captured an old render's variable and never saw the newer one.
+- **Callbacks generally** -- any function you pass somewhere to be run later drags
+  its defining scope along with it.
+
+> Correction to my first pass: I described it as the inner function "sharing the
+> scope." Sharing isn't the interesting part -- **persistence by reference** is.
+> Normally a function's locals are collected when it returns; a closure keeps a
+> live pointer, so the variable outlives its own call, and every closure over that
+> same call sees the same value.
 
 ---
 

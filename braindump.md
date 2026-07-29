@@ -319,3 +319,61 @@ different shape.
 
 **`.splice(...)`** -- TODO: mutating counterpart. Removes and/or inserts in place,
 returns the removed elements. Write out the argument shape and a worked example.
+
+---
+
+## 13. The one-door storage abstraction
+
+**The rule:** a component never talks to the backend directly. It talks to one
+storage module, and that module talks to the backend.
+
+Bad -- the fetch lives in the component:
+
+```jsx
+function GoalList() {
+  useEffect(() => {
+    fetch("https://api.example.com/goals")   // component now knows the backend
+      .then(r => r.json())
+      .then(setGoals);
+  }, []);
+}
+```
+
+Good -- the component makes an **abstract request**:
+
+```ts
+// storage.ts  <- the one door
+export async function getGoals(): Promise<Goal[]> { ... }
+export async function saveGoal(goal: Goal): Promise<void> { ... }
+```
+
+```jsx
+function GoalList() {
+  useEffect(() => { getGoals().then(setGoals); }, []);
+}
+```
+
+The component says **"I need this data"** or **"here's this data."** It does not
+know or care where the data lives. All the contextualization -- URL building,
+auth headers, request shaping, response parsing, the localStorage-over-seed merge
+from section 1 -- happens behind the door.
+
+**The payoff:** swap localStorage for a REST API, or REST for Supabase, and you
+edit **one file**. Zero components change, because none of them ever knew.
+
+**The restaurant analogy:**
+- Dining room = the components. Customers state what they want.
+- Waiters = the storage module's exported functions. They carry requests in and
+  plates out.
+- Kitchen / chefs / pantry = the database and backend.
+
+Customers never walk into the kitchen to grab food off the pan. The kitchen can be
+completely rebuilt overnight and the dining room never notices, because the only
+thing that ever crossed the boundary was an order and a plate.
+
+> Correction to my first pass: I filed this under SOLID's **L**. L is **Liskov
+> Substitution** (a subtype must work anywhere its parent does). What this actually
+> is: **D -- Dependency Inversion.** High-level modules (components) shouldn't
+> depend on low-level modules (the database); both should depend on an
+> abstraction. There's a dose of **S -- Single Responsibility** in it too: the
+> component renders, the storage module persists, neither does both.
